@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jardines Club Hípico · Salón de eventos en Xochimilco</title>
+<meta name="description" content="Salón de eventos y jardines en Xochimilco, CDMX. Sitio web, WhatsApp, llamada, Facebook y ubicación de Jardines Club Hípico.">
+<meta name="theme-color" content="#0b0d0b">
+<meta name="color-scheme" content="dark">
+
+<!-- Vista previa al compartir el enlace (WhatsApp, Facebook).
+     Al desplegar: cambia og:image por la URL completa (https://tu-dominio/og.jpg);
+     WhatsApp y Facebook no leen rutas relativas. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_MX">
+<meta property="og:site_name" content="Jardines Club Hípico">
+<meta property="og:title" content="Jardines Club Hípico · Salón de eventos en Xochimilco">
+<meta property="og:description" content="Conoce los espacios, cotiza tu evento y escríbenos por WhatsApp, llamada o Facebook.">
+<meta property="og:image" content="og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" as="image" href="assets/bg/01-m.webp" media="(orientation: portrait)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/bg/01.webp" media="(orientation: landscape)" fetchpriority="high">
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
+
+<style>
+/* Concepto: enlace de bolsillo. Una sola columna centrada sobre las fotos del salón
+   (fondo fijo, una por una). Vidrio oscuro en los botones; el dorado de la marca
+   solo en el botón principal y en el detalle de la cabecera. */
+:root{
+  --ink:#0b0d0b;                      /* negro con tinte verde, del verde del logotipo */
+  --paper:#f7f5ef;                    /* texto principal, blanco cálido */
+  --paper-soft:rgba(247,245,239,.80); /* texto secundario */
+  --gold:#c9a84c;                     /* dorado de la marca (mismo que el sitio) */
+  --gold-ink:#1b1505;                 /* texto sobre dorado */
+  --glass:rgba(12,15,12,.50);
+  --glass-hover:rgba(12,15,12,.64);
+  --edge:rgba(255,255,255,.22);
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+
+@font-face{
+  font-family:"Inter";font-style:normal;font-weight:100 700;font-display:swap;
+  src:url("assets/fonts/inter-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  background:var(--ink);
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  overscroll-behavior-y:none;          /* sin rebote que destape el fondo */
+}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--font);
+  font-size:16px;line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:max(clamp(28px,9vh,84px),env(safe-area-inset-top,0px));
+  padding-bottom:max(36px,env(safe-area-inset-bottom,0px));
+}
+
+/* ── Fondo: fotos fijas, una por una ─────────────────────────────────────────
+   Alto en lvh (no cambia cuando la barra del navegador sube o baja), así el
+   fondo no salta ni se reescala al hacer scroll. */
+.bg,.veil{
+  position:fixed;left:0;top:0;width:100%;
+  height:100vh;height:100lvh;
+  pointer-events:none;
+}
+.bg{overflow:hidden;background:var(--ink)}
+.slide{
+  position:absolute;inset:0;
+  opacity:0;
+  transition:opacity 1.6s ease;
+  will-change:opacity;
+}
+.slide.on{opacity:1}
+.slide img{
+  display:block;width:100%;height:100%;max-width:none;
+  object-fit:cover;
+}
+.veil{
+  /* Oscurece lo justo para leer: más detrás de la columna y en los extremos de arriba y abajo,
+     y deja ver las fotos en el resto. */
+  background:
+    radial-gradient(72% 62% at 50% 42%,rgba(6,9,6,.30) 0%,rgba(6,9,6,0) 100%),
+    linear-gradient(180deg,rgba(6,9,6,.54) 0%,rgba(6,9,6,.30) 34%,rgba(6,9,6,.34) 64%,rgba(6,9,6,.66) 100%);
+}
+
+/* ── Contenido ───────────────────────────────────────────────────────────── */
+.wrap{
+  position:relative;z-index:1;
+  width:100%;max-width:440px;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;gap:26px;
+}
+.head{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.mark{
+  width:104px;height:104px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(201,168,76,.92),0 16px 36px rgba(0,0,0,.45);
+}
+.mark img{display:block;width:78%;height:auto}
+h1{
+  margin:0 0 8px;
+  font-size:clamp(26px,7.4vw,34px);font-weight:600;
+  letter-spacing:-.02em;line-height:1.1;text-wrap:balance;
+  text-shadow:0 1px 3px rgba(0,0,0,.45),0 2px 22px rgba(0,0,0,.6);
+}
+.tag{
+  margin:0;
+  font-size:12px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--paper);
+  text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 16px rgba(0,0,0,.7);
+}
+.tag i{font-style:normal;color:var(--gold);padding:0 .1em}
+
+.wrap>nav{width:100%}   /* sin esto el <nav> se encoge al texto y arrastra a los botones */
+.links{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:12px}
+
+.btn{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex;align-items:center;gap:14px;
+  min-height:66px;padding:12px 16px 12px 14px;
+  border-radius:18px;
+  color:var(--paper);text-decoration:none;
+  background:var(--glass);
+  border:1px solid var(--edge);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  backdrop-filter:blur(14px) saturate(140%);
+  transition:background-color .2s ease,border-color .2s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.ico{
+  flex:none;width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.12);color:var(--gold);
+}
+.ico svg{display:block;width:22px;height:22px}
+.txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lbl{font-size:16px;font-weight:600;letter-spacing:-.005em;line-height:1.2}
+.sub{font-size:13px;font-weight:400;line-height:1.3;color:var(--paper-soft);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.go{flex:none;display:block;width:18px;height:18px;opacity:.7}
+
+.btn.main{
+  background:linear-gradient(180deg,#d6b65a 0%,#c09f3f 100%);
+  border-color:rgba(255,255,255,.38);
+  color:var(--gold-ink);
+}
+.btn.main .ico{background:rgba(27,21,5,.12);color:var(--gold-ink)}
+.btn.main .sub{color:rgba(27,21,5,.80)}
+
+@media (hover:hover){
+  .btn:hover{background:var(--glass-hover);border-color:rgba(255,255,255,.38)}
+  .btn.main:hover{background:linear-gradient(180deg,#dcbe66 0%,#c9a84c 100%)}
+}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* ── El reflejo: la única animación de los botones ──────────────────────────
+   Una franja de luz cruza cada botón y descansa. Se escalona de arriba abajo. */
+.btn::after{
+  content:"";position:absolute;z-index:2;
+  top:-10%;bottom:-10%;left:0;width:36%;
+  pointer-events:none;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.36) 50%,rgba(255,255,255,0) 100%);
+  transform:translateX(-160%) skewX(-20deg);
+  will-change:transform;
+  animation:reflejo 5.6s cubic-bezier(.45,.05,.35,1) infinite;
+  animation-delay:calc(var(--i,0) * .5s + .6s);
+}
+@keyframes reflejo{
+  0%{transform:translateX(-160%) skewX(-20deg)}
+  26%,100%{transform:translateX(420%) skewX(-20deg)}
+}
+
+.foot{
+  margin:0;text-align:center;
+  font-size:12px;letter-spacing:.04em;line-height:1.7;
+  color:rgba(247,245,239,.84);
+  text-shadow:0 1px 2px rgba(0,0,0,.5),0 1px 12px rgba(0,0,0,.7);
+}
+.foot span{white-space:nowrap}
+
+/* Pantallas bajas (iPhone SE y similares): todo cabe sin hacer scroll. */
+@media (max-height:760px){
+  body{
+    padding-top:max(22px,env(safe-area-inset-top,0px));
+    padding-bottom:max(22px,env(safe-area-inset-bottom,0px));
+  }
+  .wrap{gap:18px}
+  .head{gap:12px}
+  .mark{width:84px;height:84px}
+  h1{margin-bottom:6px}
+  .links{gap:10px}
+  .btn{min-height:60px;padding-top:10px;padding-bottom:10px}
+  .ico{width:38px;height:38px}
+}
+
+/* Pantallas muy angostas (320 px): botones más compactos para que el texto no se parta. */
+@media (max-width:350px){
+  .btn{gap:10px;padding-left:10px;padding-right:12px}
+  .ico{width:36px;height:36px}
+  .ico svg{width:20px;height:20px}
+  .go{width:16px;height:16px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .btn::after{animation:none;display:none}
+  .slide{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <picture class="slide on">
+    <source media="(orientation: portrait)" srcset="assets/bg/01-m.webp">
+    <img src="assets/bg/01.webp" alt="" width="1920" height="1080" decoding="async" fetchpriority="high">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/02-m.webp">
+    <img data-src="assets/bg/02.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/03-m.webp">
+    <img data-src="assets/bg/03.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/04-m.webp">
+    <img data-src="assets/bg/04.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/05-m.webp">
+    <img data-src="assets/bg/05.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/06-m.webp">
+    <img data-src="assets/bg/06.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/07-m.webp">
+    <img data-src="assets/bg/07.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+  <picture class="slide">
+    <source media="(orientation: portrait)" data-srcset="assets/bg/08-m.webp">
+    <img data-src="assets/bg/08.webp" alt="" width="1920" height="1080" decoding="async">
+  </picture>
+</div>
+<div class="veil" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="head">
+    <div class="mark">
+      <img src="assets/logo.webp" alt="Logotipo de Jardines Club Hípico" width="320" height="314">
+    </div>
+    <div>
+      <h1>Jardines Club Hípico</h1>
+      <p class="tag">Salón de eventos <i>·</i> Xochimilco</p>
+    </div>
+  </header>
+
+  <nav aria-label="Enlaces de Jardines Club Hípico">
+    <ul class="links">
+
+      <li style="--i:0">
+        <a class="btn main" href="https://jardines-club-hipico.vercel.app" target="_blank" rel="noopener">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
+          <span class="txt"><span class="lbl">Sitio web</span><span class="sub">Conoce los espacios y cotiza</span></span>
+          <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </li>
+
+      <li style="--i:1">
+        <a class="btn" href="https://wa.me/525523118153?text=Hola%2C%20quiero%20informaci%C3%B3n%20para%20un%20evento%20en%20Jardines%20Club%20H%C3%ADpico." target="_blank" rel="noopener">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          </span>
+          <span class="txt"><span class="lbl">WhatsApp</span><span class="sub">Escríbenos al 55 2311 8153</span></span>
+          <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </li>
+
+      <li style="--i:2">
+        <a class="btn" href="tel:+525523118153">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <span class="txt"><span class="lbl">Llamar</span><span class="sub">Llámanos al 55 2311 8153</span></span>
+          <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </li>
+
+      <li style="--i:3">
+        <a class="btn" href="https://www.facebook.com/JardinesClubHipico/" target="_blank" rel="noopener">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </span>
+          <span class="txt"><span class="lbl">Facebook</span><span class="sub">@JardinesClubHipico</span></span>
+          <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </li>
+
+      <li style="--i:4">
+        <a class="btn" href="https://maps.app.goo.gl/s52mSRk6gAvtBKn1A" target="_blank" rel="noopener">
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <span class="txt"><span class="lbl">Cómo llegar</span><span class="sub">Duraznos S/N, Sta. Inés, Xochimilco, 16810 CDMX</span></span>
+          <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+
+  <p class="foot"><span>+30 años de experiencia</span> · <span>+500 eventos</span> · <span>8 espacios</span></p>
+</main>
+
+<script>
+(function () {
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  if (slides.length < 2) return;
+
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var saveData = navigator.connection && navigator.connection.saveData;
+  if (reduce || saveData) return;               // una sola foto, sin descargar las demás
+
+  var INTERVALO = 6500;                         // ms que se ve cada foto
+  var cur = 0, timer = null;
+
+  function load(el) {
+    if (el.getAttribute('data-ready')) return;
+    var s = el.querySelector('source'), i = el.querySelector('img');
+    if (s && s.getAttribute('data-srcset')) s.setAttribute('srcset', s.getAttribute('data-srcset'));
+    if (i && i.getAttribute('data-src')) {
+      i.setAttribute('src', i.getAttribute('data-src'));
+      if (i.decode) i.decode().catch(function () {});
+    }
+    el.setAttribute('data-ready', '1');
+  }
+  function ready(el) {
+    var i = el.querySelector('img');
+    return !!(i && i.complete && i.naturalWidth > 0);
+  }
+  function next() {
+    for (var k = 1; k < slides.length; k++) {
+      var c = (cur + k) % slides.length;
+      if (ready(slides[c])) {
+        slides[cur].classList.remove('on');
+        slides[c].classList.add('on');
+        cur = c;
+        return;
+      }
+    }
+  }
+  function play() { if (!timer) timer = setInterval(next, INTERVALO); }
+  function stop() { clearInterval(timer); timer = null; }
+
+  function start() {
+    var q = slides.slice(1), n = 0;
+    (function pump() {
+      if (n >= q.length) return;
+      load(q[n++]);
+      setTimeout(pump, 700);                    // precarga escalonada, sin saturar la red
+    })();
+    play();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else play();
+  });
+
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start);
+})();
+</script>
+</body>
+</html>
