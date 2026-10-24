@@ -8,17 +8,20 @@
 <meta name="theme-color" content="#0b0d0b">
 <meta name="color-scheme" content="dark">
 
-<!-- Vista previa al compartir el enlace (WhatsApp, Facebook).
-     Al desplegar: cambia og:image por la URL completa (https://tu-dominio/og.jpg);
-     WhatsApp y Facebook no leen rutas relativas. -->
+<!-- Vista previa al compartir el enlace (WhatsApp, Facebook). Usan la URL completa del sitio:
+     si cambias de dominio, cambia también og:url, og:image y canonical. -->
+<link rel="canonical" href="https://jch-links.vercel.app/">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://jch-links.vercel.app/">
 <meta property="og:locale" content="es_MX">
 <meta property="og:site_name" content="Jardines Club Hípico">
 <meta property="og:title" content="Jardines Club Hípico · Salón de eventos en Xochimilco">
 <meta property="og:description" content="Conoce los espacios, cotiza tu evento y escríbenos por WhatsApp, llamada o Facebook.">
-<meta property="og:image" content="og.jpg">
+<meta property="og:image" content="https://jch-links.vercel.app/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jardines Club Hípico, salón de eventos en Xochimilco">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" type="image/png" href="favicon.png">
