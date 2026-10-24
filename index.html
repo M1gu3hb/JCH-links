@@ -81,6 +81,8 @@ html{
 }
 body{
   margin:0;
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;
   background:var(--ink);
   color:var(--paper);
   font-family:var(--font);
@@ -125,6 +127,7 @@ body{
 .wrap{
   position:relative;z-index:1;
   width:100%;max-width:440px;margin:0 auto;
+  flex:1 0 auto;
   display:flex;flex-direction:column;align-items:center;gap:var(--gap);
 }
 .head{display:flex;flex-direction:column;align-items:center;gap:var(--gap-head);text-align:center}
@@ -211,13 +214,28 @@ h1{
   26%,100%{transform:translateX(420%) skewX(-20deg)}
 }
 
-.foot{
+.stats{
   margin:0;text-align:center;
   font-size:12px;letter-spacing:.04em;line-height:1.7;
   color:rgba(247,245,239,.84);
   text-shadow:0 1px 2px rgba(0,0,0,.5),0 1px 12px rgba(0,0,0,.7);
 }
-.foot span{white-space:nowrap}
+.stats span{white-space:nowrap}
+
+/* Crédito: pegado al fondo de la pantalla cuando sobra espacio; si no, queda debajo de las cifras. */
+.credit{
+  margin:auto 0 0;text-align:center;
+  font-size:12px;letter-spacing:.05em;line-height:1.4;
+  color:rgba(247,245,239,.74);
+  text-shadow:0 1px 2px rgba(0,0,0,.55),0 1px 12px rgba(0,0,0,.75);
+}
+.credit a{
+  display:inline-block;padding:4px 2px;margin:-4px -2px;   /* zona de toque cómoda */
+  color:var(--paper);font-weight:600;text-decoration:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.credit a:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+@media (hover:hover){.credit a:hover{color:var(--gold)}}
 
 /* Pantallas muy angostas (320 px): botones más compactos para que el texto no se parta
    y un sello un poco menor, porque ahí las cifras y la dirección ocupan una línea más. */
@@ -344,7 +362,9 @@ h1{
     </ul>
   </nav>
 
-  <p class="foot"><span>+30 años de experiencia</span> · <span>+500 eventos</span> · <span>8 espacios</span></p>
+  <p class="stats"><span>+30 años de experiencia</span> · <span>+500 eventos</span> · <span>8 espacios</span></p>
+
+  <footer class="credit">Made by <a href="https://morphiq.com.mx" target="_blank" rel="noopener">Morphiq</a></footer>
 </main>
 
 <script>
