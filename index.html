@@ -25,6 +25,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" as="image" href="assets/bg/01-m.webp" media="(orientation: portrait)" fetchpriority="high">
 <link rel="preload" as="image" href="assets/bg/01.webp" media="(orientation: landscape)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/logo.webp">
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/inter-latin.woff2" crossorigin>
 
 <style>
@@ -41,7 +42,28 @@
   --glass-hover:rgba(12,15,12,.64);
   --edge:rgba(255,255,255,.22);
   --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  /* Medidas del diseño compacto (celulares). */
+  --mark:132px;                       /* sello del logo */
+  --pt:20px;--pb:20px;                /* aire arriba y abajo */
+  --gap:16px;--gap-head:12px;--h1-mb:6px;
+  --links-gap:10px;--btn-pad:10px;--ico:38px;
   color-scheme:dark;
+}
+@supports (height:100svh){
+  /* El sello y el aire se ajustan solos a la altura disponible (sin saltos ni cortes por tamaño de
+     pantalla): compacto hasta ~664px de alto, muy compacto debajo de eso y más holgado desde ~720px.
+     svh = alto con la barra del navegador visible, así nada se reacomoda al hacer scroll. */
+  :root{
+    --mark:calc(98px + clamp(0px,calc((100svh - 600px) * .15625),10px) + clamp(0px,calc((100svh - 664px) * 1),52px));
+    --pt:calc(12px + clamp(0px,calc((100svh - 600px) * 0.125),8px) + clamp(0px,calc((100svh - 720px) * 0.35),64px));
+    --pb:calc(14px + clamp(0px,calc((100svh - 600px) * 0.09375),6px) + clamp(0px,calc((100svh - 720px) * 0.1),16px));
+    --gap:calc(12px + clamp(0px,calc((100svh - 600px) * 0.0625),4px) + clamp(0px,calc((100svh - 720px) * 0.0625),10px));
+    --gap-head:calc(10px + clamp(0px,calc((100svh - 600px) * 0.03125),2px) + clamp(0px,calc((100svh - 720px) * 0.025),4px));
+    --h1-mb:calc(4px + clamp(0px,calc((100svh - 600px) * 0.03125),2px) + clamp(0px,calc((100svh - 720px) * 0.0125),2px));
+    --links-gap:calc(8px + clamp(0px,calc((100svh - 600px) * 0.03125),2px) + clamp(0px,calc((100svh - 720px) * 0.0125),2px));
+    --btn-pad:calc(8px + clamp(0px,calc((100svh - 600px) * 0.03125),2px) + clamp(0px,calc((100svh - 720px) * 0.0125),2px));
+    --ico:calc(34px + clamp(0px,calc((100svh - 600px) * 0.0625),4px) + clamp(0px,calc((100svh - 720px) * 0.025),4px));
+  }
 }
 
 @font-face{
@@ -67,8 +89,8 @@ body{
   overflow-x:hidden;
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-top:max(clamp(28px,9vh,84px),env(safe-area-inset-top,0px));
-  padding-bottom:max(36px,env(safe-area-inset-bottom,0px));
+  padding-top:max(var(--pt),env(safe-area-inset-top,0px));
+  padding-bottom:max(var(--pb),env(safe-area-inset-bottom,0px));
 }
 
 /* ── Fondo: fotos fijas, una por una ─────────────────────────────────────────
@@ -81,7 +103,7 @@ body{
 }
 .bg{overflow:hidden;background:var(--ink)}
 .slide{
-  position:absolute;inset:0;
+  position:absolute;top:0;right:0;bottom:0;left:0;
   opacity:0;
   transition:opacity 1.6s ease;
   will-change:opacity;
@@ -103,18 +125,21 @@ body{
 .wrap{
   position:relative;z-index:1;
   width:100%;max-width:440px;margin:0 auto;
-  display:flex;flex-direction:column;align-items:center;gap:26px;
+  display:flex;flex-direction:column;align-items:center;gap:var(--gap);
 }
-.head{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.head{display:flex;flex-direction:column;align-items:center;gap:var(--gap-head);text-align:center}
+
+/* Sello: escudo completo con el nombre en arco (letra Cinzel, convertida a trazos para que
+   se vea igual en todos los dispositivos). Círculo blanco con aro dorado. */
 .mark{
-  width:104px;height:104px;border-radius:50%;
-  display:grid;place-items:center;
+  display:block;flex:none;
+  width:var(--mark);height:var(--mark);border-radius:50%;
   background:#fff;
   box-shadow:0 0 0 3px rgba(201,168,76,.92),0 16px 36px rgba(0,0,0,.45);
 }
-.mark img{display:block;width:78%;height:auto}
+.mark svg{display:block;width:100%;height:100%}
 h1{
-  margin:0 0 8px;
+  margin:0 0 var(--h1-mb);
   font-size:clamp(26px,7.4vw,34px);font-weight:600;
   letter-spacing:-.02em;line-height:1.1;text-wrap:balance;
   text-shadow:0 1px 3px rgba(0,0,0,.45),0 2px 22px rgba(0,0,0,.6);
@@ -128,12 +153,12 @@ h1{
 .tag i{font-style:normal;color:var(--gold);padding:0 .1em}
 
 .wrap>nav{width:100%}   /* sin esto el <nav> se encoge al texto y arrastra a los botones */
-.links{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:12px}
+.links{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:var(--links-gap)}
 
 .btn{
   position:relative;isolation:isolate;overflow:hidden;
   display:flex;align-items:center;gap:14px;
-  min-height:66px;padding:12px 16px 12px 14px;
+  min-height:60px;padding:var(--btn-pad) 16px var(--btn-pad) 14px;
   border-radius:18px;
   color:var(--paper);text-decoration:none;
   background:var(--glass);
@@ -144,14 +169,15 @@ h1{
   -webkit-tap-highlight-color:transparent;
 }
 .ico{
-  flex:none;width:42px;height:42px;border-radius:50%;
+  flex:none;width:var(--ico);height:var(--ico);border-radius:50%;
   display:grid;place-items:center;
   background:rgba(255,255,255,.12);color:var(--gold);
 }
 .ico svg{display:block;width:22px;height:22px}
 .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .lbl{font-size:16px;font-weight:600;letter-spacing:-.005em;line-height:1.2}
-.sub{font-size:13px;font-weight:400;line-height:1.3;color:var(--paper-soft);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sub{font-size:13px;font-weight:400;line-height:1.3;color:var(--paper-soft);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;text-wrap:balance}
+.nw{white-space:nowrap}   /* la dirección se parte entre palabras completas, nunca a la mitad de "Olivos 23" */
 .go{flex:none;display:block;width:18px;height:18px;opacity:.7}
 
 .btn.main{
@@ -193,27 +219,18 @@ h1{
 }
 .foot span{white-space:nowrap}
 
-/* Pantallas bajas (iPhone SE y similares): todo cabe sin hacer scroll. */
-@media (max-height:760px){
-  body{
-    padding-top:max(22px,env(safe-area-inset-top,0px));
-    padding-bottom:max(22px,env(safe-area-inset-bottom,0px));
-  }
-  .wrap{gap:18px}
-  .head{gap:12px}
-  .mark{width:84px;height:84px}
-  h1{margin-bottom:6px}
-  .links{gap:10px}
-  .btn{min-height:60px;padding-top:10px;padding-bottom:10px}
-  .ico{width:38px;height:38px}
-}
-
-/* Pantallas muy angostas (320 px): botones más compactos para que el texto no se parta. */
+/* Pantallas muy angostas (320 px): botones más compactos para que el texto no se parta
+   y un sello un poco menor, porque ahí las cifras y la dirección ocupan una línea más. */
 @media (max-width:350px){
   .btn{gap:10px;padding-left:10px;padding-right:12px}
   .ico{width:36px;height:36px}
   .ico svg{width:20px;height:20px}
   .go{width:16px;height:16px}
+}
+@media (max-width:350px){
+  @supports (height:100svh){
+    :root{--mark:clamp(100px,calc(100svh - 600px),150px)}
+  }
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -262,8 +279,8 @@ h1{
 
 <main class="wrap">
   <header class="head">
-    <div class="mark">
-      <img src="assets/logo.webp" alt="Logotipo de Jardines Club Hípico" width="320" height="314">
+    <div class="mark" role="img" aria-label="Logotipo de Jardines Club Hípico">
+      <svg viewBox="0 0 200 200" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" focusable="false"><circle cx="100" cy="100" r="94.60" fill="none" stroke="#b8943a" stroke-width="0.9"/><image href="assets/logo.webp" xlink:href="assets/logo.webp" x="32.00" y="33.28" width="136.00" height="133.45"/><g fill="#066a39"><path transform="translate(30.25 67.38) rotate(-64.93) translate(-3.46 0) scale(0.01800 -0.01800)" d="M272 700H349V690H336Q310 690 291.5 671.5Q273 653 272 627V30Q272 -25 250 -69.5Q228 -114 190.5 -145Q153 -176 105 -190.5Q57 -205 5 -200V-191Q47 -173 73 -137.5Q99 -102 110.5 -57.5Q122 -13 122 33V627Q121 653 102.5 671.5Q84 690 58 690H45V700Z"/><path transform="translate(36.51 56.44) rotate(-55.54) translate(-6.45 0) scale(0.01800 -0.01800)" d="M354 720 656 60Q671 36 690 25Q714 10 737 10H745V0H427V10H436Q456 10 471 26.5Q486 43 474 73L425 196H190L138 69Q132 52 136 39Q141 25 153 17.5Q165 10 177 10H186V0H-28V10H-19Q4 10 29 25Q48 36 62 60L296 589Q299 595 306.5 611.5Q314 628 322.5 649Q331 670 338 689.5Q345 709 345 720ZM208 238H408L310 484Z"/><path transform="translate(46.77 44.36) rotate(-43.73) translate(-6.72 0) scale(0.01800 -0.01800)" d="M122 73V627Q121 653 102.5 671.5Q84 690 58 690H45V700H388Q433 700 476 690Q519 680 552.5 658Q586 636 606 600Q626 564 626 511Q626 469 608.5 427.5Q591 386 555 356.5Q519 327 462 321Q494 311 520.5 285Q547 259 564 233Q565 231 575.5 215Q586 199 601.5 175.5Q617 152 634 128Q651 104 665 86Q687 59 705 42.5Q723 26 743 18.5Q763 11 789 10V0H691Q637 0 593 9.5Q549 19 515 42Q481 65 456 104Q448 116 438.5 134.5Q429 153 419 174Q409 195 399.5 214.5Q390 234 383 250Q376 266 373 275Q360 307 342.5 323Q325 339 305 342V352H336Q363 352 388.5 363Q414 374 434 399Q454 424 462 468Q464 477 465.5 489Q467 501 466 516Q463 588 430 621.5Q397 655 348 656Q334 657 317.5 656.5Q301 656 288 656H272V73Q272 47 291 28.5Q310 10 336 10H348V0H45V10H58Q84 10 102.5 28.5Q121 47 122 73Z"/><path transform="translate(60.14 34.12) rotate(-31.17) translate(-7.45 0) scale(0.01800 -0.01800)" d="M405 700Q523 700 609 657.5Q695 615 741.5 536.5Q788 458 788 350Q788 242 741.5 163.5Q695 85 609 42.5Q523 0 405 0H42V10H55Q81 10 99.5 28.5Q118 47 119 73V627Q119 653 100 671.5Q81 690 55 690H43L42 700ZM269 658V42H393Q465 42 517 79.5Q569 117 597 186Q625 255 625 350Q625 445 597 514Q569 583 517 620.5Q465 658 393 658Z"/><path transform="translate(72.37 28.13) rotate(-21.03) translate(-3.48 0) scale(0.01800 -0.01800)" d="M119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H346V690H333Q307 690 288.5 671.5Q270 653 269 627V73Q270 47 288.5 28.5Q307 10 333 10H346V0H42V10H55Q81 10 99.5 28.5Q118 47 119 73Z"/><path transform="translate(85.79 24.32) rotate(-10.63) translate(-7.78 0) scale(0.01800 -0.01800)" d="M108 715 613 234V629Q612 655 594.5 672.5Q577 690 551 690H532V700H835V690H817Q792 690 774 672.5Q756 655 755 629V114Q755 77 758 47.5Q761 18 764 2L767 -14H758L252 467L253 71Q253 46 271 28Q289 10 314 10H333V0H30V10H49Q74 10 92 28Q110 46 110 71V590Q110 646 104 681L98 715Z"/><path transform="translate(101.88 23.02) rotate(1.40) translate(-5.69 0) scale(0.01800 -0.01800)" d="M606 205 560 0H42V10H55Q81 10 99.5 28.5Q118 47 119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H423Q445 700 469.5 703Q494 706 515 710Q536 714 545 718V543H535V555Q535 601 508 629Q484 653 447 657H269V366H401Q438 367 462 391.5Q486 416 486 453V460H496V230H486V238Q486 275 462 299Q438 323 401 324H269V43H400Q450 43 488 62.5Q526 82 553 118.5Q580 155 596 205Z"/><path transform="translate(115.37 24.55) rotate(11.51) translate(-5.20 0) scale(0.01800 -0.01800)" d="M277 714Q297 714 326.5 712Q356 710 388 707Q399 705 409 704H476L475 692Q475 692 475 692L463 557H453Q453 609 414.5 640.5Q376 672 312 672Q254 672 218.5 644Q183 616 181 576Q180 546 200 524Q220 502 251 483L442 359Q488 333 511.5 291Q535 249 532 193Q527 95 457 40.5Q387 -14 267 -14Q223 -14 181.5 -6.5Q140 1 108 14.5Q76 28 57 47Q49 69 50 100Q51 131 59.5 163Q68 195 81 216H90Q86 165 108.5 121.5Q131 78 174.5 52.5Q218 27 278 28Q344 29 380 61.5Q416 94 416 140Q416 171 397.5 196Q379 221 337 244L162 360Q109 390 85 437Q61 484 66 539Q71 591 97 630.5Q123 670 168.5 692Q214 714 277 714Z"/><path transform="translate(136.12 32.00) rotate(27.97) translate(-7.02 0) scale(0.01800 -0.01800)" d="M722 292 731 120Q709 83 672 53Q635 23 580 4.5Q525 -14 450 -14Q328 -13 236.5 30.5Q145 74 95 155Q45 236 45 351Q45 463 94 544.5Q143 626 234.5 670Q326 714 453 714Q533 714 596.5 698Q660 682 703 659L704 488H695Q668 587 607 629.5Q546 672 464 672Q384 672 327 633Q270 594 239 523Q208 452 208 353Q208 254 237.5 182Q267 110 321.5 70Q376 30 450 28Q527 28 580 53Q633 78 665.5 136Q698 194 714 292Z"/><path transform="translate(148.81 40.45) rotate(39.34) translate(-5.55 0) scale(0.01800 -0.01800)" d="M606 205 560 0H42V10H55Q81 10 99.5 28.5Q118 47 119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H346V690H333Q307 690 288.5 671.5Q270 653 269 627V43H400Q450 43 488 62.5Q526 82 553 118.5Q580 155 596 205Z"/><path transform="translate(159.82 51.52) rotate(50.98) translate(-7.39 0) scale(0.01800 -0.01800)" d="M326 700V690H310Q288 690 272.5 676Q257 662 257 640V260Q257 189 280.5 137Q304 85 347.5 57Q391 29 451 29Q512 29 556.5 55.5Q601 82 625 131Q649 180 649 247V640Q649 662 633.5 676Q618 690 596 690H580V700H790V690H774Q752 690 736.5 676Q721 662 721 640V253Q721 171 686.5 111Q652 51 587.5 18.5Q523 -14 432 -14Q326 -14 253 18.5Q180 51 143.5 110.5Q107 170 107 252V640Q107 662 91.5 676Q76 690 54 690H38V700Z"/><path transform="translate(168.61 65.04) rotate(63.00) translate(-6.07 0) scale(0.01800 -0.01800)" d="M119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H331Q404 700 461.5 682.5Q519 665 552 627.5Q585 590 585 529Q585 483 567.5 451Q550 419 522 402Q494 385 463 381Q513 377 553.5 353Q594 329 617 289Q640 249 640 195Q640 131 605 87.5Q570 44 506.5 22Q443 0 359 0H42V10H55Q81 10 99.5 28.5Q118 47 119 73ZM269 657V45H315Q360 45 394.5 62Q429 79 448.5 115Q468 151 468 207Q468 251 454.5 282Q441 313 418.5 332.5Q396 352 366 361Q336 370 303 370V379Q326 379 348 386.5Q370 394 387.5 410Q405 426 415 452.5Q425 479 425 516Q425 567 409.5 598Q394 629 365 643Q336 657 298 657Z"/><path transform="translate(62.58 181.41) rotate(24.68) translate(-7.76 0) scale(0.01800 -0.01800)" d="M119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H346V690H333Q307 690 288.5 671.5Q270 653 269 627V370H593V627Q593 653 574 671.5Q555 690 529 690H516V700H820V690H807Q781 690 762.5 671.5Q744 653 743 627V73Q744 47 762.5 28.5Q781 10 807 10H820V0H516V10H529Q555 10 574 28.5Q593 47 593 73V327H269V73Q270 47 288.5 28.5Q307 10 333 10H346V0H42V10H55Q81 10 99.5 28.5Q118 47 119 73Z"/><path transform="translate(77.21 186.65) rotate(14.73) translate(-3.48 0) scale(0.01800 -0.01800)" d="M119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H346V690H333Q307 690 288.5 671.5Q270 653 269 627V73Q270 47 288.5 28.5Q307 10 333 10H346V0H42V10H55Q81 10 99.5 28.5Q118 47 119 73ZM177 769Q194 798 219 829Q244 860 271.5 887Q299 914 320 934Q347 919 363 899Q379 879 389 852Q359 833 323.5 815.5Q288 798 252.5 784Q217 770 184 762Z"/><path transform="translate(90.68 189.11) rotate(5.97) translate(-5.90 0) scale(0.01800 -0.01800)" d="M122 73V627Q122 653 103 671.5Q84 690 58 690H46L45 700H379Q465 700 518.5 675Q572 650 598.5 606.5Q625 563 627 508Q629 457 610 415Q591 373 558 345Q525 317 482.5 304.5Q440 292 394.5 298.5Q349 305 306 333V343H319Q331 343 350.5 347Q370 351 391.5 362Q413 373 432 396Q451 419 461 457Q465 470 466.5 486.5Q468 503 467 517Q466 581 432.5 619.5Q399 658 338 658H272V73Q273 47 291.5 28.5Q310 10 336 10H349V0H45V10H58Q84 10 102.5 28.5Q121 47 122 73Z"/><path transform="translate(104.37 189.49) rotate(-2.80) translate(-3.48 0) scale(0.01800 -0.01800)" d="M119 73V627Q118 653 99.5 671.5Q81 690 55 690H42V700H346V690H333Q307 690 288.5 671.5Q270 653 269 627V73Q270 47 288.5 28.5Q307 10 333 10H346V0H42V10H55Q81 10 99.5 28.5Q118 47 119 73Z"/><path transform="translate(119.05 187.55) rotate(-12.28) translate(-7.02 0) scale(0.01800 -0.01800)" d="M722 292 731 120Q709 83 672 53Q635 23 580 4.5Q525 -14 450 -14Q328 -13 236.5 30.5Q145 74 95 155Q45 236 45 351Q45 463 94 544.5Q143 626 234.5 670Q326 714 453 714Q533 714 596.5 698Q660 682 703 659L704 488H695Q668 587 607 629.5Q546 672 464 672Q384 672 327 633Q270 594 239 523Q208 452 208 353Q208 254 237.5 182Q267 110 321.5 70Q376 30 450 28Q527 28 580 53Q633 78 665.5 136Q698 194 714 292Z"/><path transform="translate(137.28 181.48) rotate(-24.59) translate(-7.91 0) scale(0.01800 -0.01800)" d="M442 714Q562 714 650.5 669.5Q739 625 787.5 544Q836 463 836 350Q836 238 787.5 156.5Q739 75 650.5 30.5Q562 -14 442 -14Q322 -14 233.5 30.5Q145 75 97 156Q49 237 49 350Q49 462 97 543.5Q145 625 233.5 669.5Q322 714 442 714ZM442 28Q513 28 564 67.5Q615 107 643 179Q671 251 671 350Q671 449 643 521Q615 593 564 632.5Q513 672 442 672Q372 672 320.5 632.5Q269 593 241 521Q213 449 213 350Q213 251 241 179Q269 107 320.5 67.5Q372 28 442 28Z"/><circle cx="21.21" cy="127.03" r="1.90" fill="#b8943a"/><circle cx="178.79" cy="127.03" r="1.90" fill="#b8943a"/></g></svg>
     </div>
     <div>
       <h1>Jardines Club Hípico</h1>
@@ -319,7 +336,7 @@ h1{
           <span class="ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </span>
-          <span class="txt"><span class="lbl">Cómo llegar</span><span class="sub">Olivos 23, Sta. Inés, Xochimilco, 16810 CDMX</span></span>
+          <span class="txt"><span class="lbl">Cómo llegar</span><span class="sub"><span class="nw">Olivos 23,</span> <span class="nw">Sta. Inés,</span> <span class="nw">Xochimilco,</span> <span class="nw">16810 CDMX</span></span></span>
           <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
         </a>
       </li>
