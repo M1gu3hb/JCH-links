@@ -1,10 +1,25 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=2592000" }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Robots-Tag", "value": "noindex" }
       ]
     },
     {

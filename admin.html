@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel · Jardines Club Hípico</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0b0d0b">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" as="font" type="font/woff2" href="/assets/fonts/inter-latin.woff2" crossorigin>
+
+<style>
+/* Panel de analíticas. Mismo lenguaje que la página de links: negro verdoso, blanco cálido y el dorado de
+   la marca solo donde importa (la cifra principal, las barras y el botón activo). */
+:root{
+  --ink:#0b0d0b;
+  --paper:#f7f5ef;
+  --paper-soft:rgba(247,245,239,.74);
+  --paper-dim:rgba(247,245,239,.52);
+  --gold:#c9a84c;
+  --gold-soft:rgba(201,168,76,.16);
+  --gold-ink:#1b1505;
+  --card:rgba(255,255,255,.045);
+  --edge:rgba(255,255,255,.11);
+  --edge-strong:rgba(255,255,255,.24);
+  --ok:#8cc79a;
+  --bad:#f09384;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+@font-face{
+  font-family:"Inter";font-style:normal;font-weight:100 700;font-display:swap;
+  src:url("/assets/fonts/inter-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;min-height:100dvh;
+  background-color:var(--ink);
+  background-image:radial-gradient(900px 460px at 50% -140px,rgba(201,168,76,.14),rgba(201,168,76,0) 70%);
+  background-repeat:no-repeat;
+  color:var(--paper);font-family:var(--font);font-size:15px;line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  padding-top:max(16px,env(safe-area-inset-top,0px));
+  padding-bottom:max(24px,env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible+.pista{outline:2px solid var(--gold);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ── Cargando ─────────────────────────────────────────────────────────────── */
+.centro{min-height:calc(100vh - 40px);min-height:calc(100dvh - 40px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;color:var(--paper-soft)}
+.carga{width:26px;height:26px;border-radius:50%;border:2px solid var(--edge-strong);border-top-color:var(--gold);animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+/* ── Pantalla del PIN ─────────────────────────────────────────────────────── */
+.pin{max-width:360px;min-height:calc(100vh - 40px);min-height:calc(100dvh - 40px);margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.sello{width:76px;height:76px;border-radius:50%;background:#fff;padding:5px;object-fit:contain;box-shadow:0 0 0 2px var(--gold),0 12px 32px rgba(0,0,0,.5)}
+.pin h1{margin:18px 0 2px;font-size:22px;font-weight:650;letter-spacing:-.01em}
+.pin .sub{margin:0;font-size:14px;color:var(--paper-soft)}
+.puntos{display:flex;gap:16px;height:16px;margin:26px 0 12px}
+.puntos i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--edge-strong);transition:background .12s,border-color .12s,transform .12s}
+.puntos i.on{background:var(--gold);border-color:var(--gold);transform:scale(1.1)}
+.puntos.mal{animation:sacudir .42s}
+@keyframes sacudir{15%{transform:translateX(-9px)}35%{transform:translateX(8px)}55%{transform:translateX(-6px)}75%{transform:translateX(4px)}}
+.aviso{min-height:42px;margin:0 0 14px;max-width:290px;font-size:13.5px;line-height:1.35;color:var(--paper-soft)}
+.aviso.mal{color:var(--bad)}
+.teclado{display:grid;grid-template-columns:repeat(3,72px);gap:12px 18px;justify-content:center}
+.tecla{width:72px;height:72px;padding:0;border-radius:50%;border:1px solid var(--edge);background:var(--card);font-size:26px;font-weight:500;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s,transform .08s;touch-action:manipulation}
+.tecla:hover{background:rgba(255,255,255,.085)}
+.tecla:active{background:var(--gold-soft);border-color:var(--gold);transform:scale(.96)}
+.tecla svg{width:26px;height:26px}
+.tecla.vacia{visibility:hidden}
+.teclado.ocupado .tecla{opacity:.4;pointer-events:none}
+@media (max-height:660px){
+  .sello{width:58px;height:58px}
+  .pin h1{margin-top:12px;font-size:20px}
+  .puntos{margin:16px 0 8px}
+  .aviso{min-height:38px;margin-bottom:8px}
+  .teclado{grid-template-columns:repeat(3,60px);gap:9px 16px}
+  .tecla{width:60px;height:60px;font-size:22px}
+}
+
+/* ── Panel ────────────────────────────────────────────────────────────────── */
+.panel{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.top{display:flex;align-items:center;gap:12px}
+.sello-mini{flex:none;width:44px;height:44px;border-radius:50%;background:#fff;padding:3px;object-fit:contain;box-shadow:0 0 0 1.5px var(--gold)}
+.titulo{flex:1;min-width:0}
+.titulo h1{margin:0;font-size:19px;font-weight:650;letter-spacing:-.01em}
+.titulo p{margin:1px 0 0;font-size:12.5px;color:var(--paper-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-sec{flex:none;min-height:40px;padding:0 16px;border-radius:11px;border:1px solid var(--edge);background:var(--card);font-size:13.5px;font-weight:550;transition:background .12s,border-color .12s}
+.btn-sec:hover{background:rgba(255,255,255,.085);border-color:var(--edge-strong)}
+
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:var(--card);border:1px solid var(--edge)}
+.tabs button{min-height:42px;padding:0 4px;border:0;border-radius:10px;background:transparent;font-size:14px;font-weight:600;color:var(--paper-soft);transition:background .15s,color .15s;touch-action:manipulation}
+.tabs button:hover{color:var(--paper)}
+.tabs button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink)}
+
+/* Cifras: la de visitas ocupa todo el ancho en el celular; personas y clics van lado a lado. */
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.card{background:var(--card);border:1px solid var(--edge);border-radius:16px;padding:16px;min-width:0}
+.card h2{margin:0 0 14px;font-size:12.5px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-soft)}
+.kpi{padding:14px 16px 14px}
+.kpi.principal{grid-column:1/-1}
+.kpi .et{font-size:11.5px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-soft)}
+.kpi .v{margin-top:6px;font-size:clamp(30px,9vw,38px);font-weight:700;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi.principal .v{color:var(--gold);font-size:clamp(46px,14vw,58px)}
+.kpi .nota{margin-top:5px;font-size:12.5px;line-height:1.3;color:var(--paper-dim)}
+.kpi .ultima{margin-top:2px}
+
+.filas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:15px}
+.fila .linea{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.fila .nom{min-width:0;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fila .nom small{display:block;margin-top:1px;font-size:11.5px;font-weight:400;color:var(--paper-dim);white-space:normal}
+.fila .num{flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fila .num b{font-size:18px;font-weight:700}
+.fila .num span{margin-left:7px;font-size:12.5px;color:var(--paper-dim)}
+.barra{height:6px;margin-top:8px;border-radius:99px;background:rgba(255,255,255,.075);overflow:hidden}
+.barra i{display:block;width:0;height:100%;border-radius:inherit;background:var(--gold);transition:width .55s cubic-bezier(.2,.7,.2,1)}
+.fila.cero .nom,.fila.cero .num b{color:var(--paper-dim)}
+.vacio-msg{margin:0;font-size:14px;color:var(--paper-dim)}
+
+.grafica{position:relative;display:flex;align-items:flex-end;gap:2px;height:150px;border-bottom:1px solid var(--edge);touch-action:pan-y;cursor:crosshair;user-select:none;-webkit-user-select:none}
+.slot{position:relative;flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;border-radius:4px 4px 0 0}
+.slot .v{width:100%;max-width:24px;border-radius:3px 3px 0 0;background:var(--gold);transition:height .5s cubic-bezier(.2,.7,.2,1)}
+.slot .c{position:absolute;left:50%;bottom:0;width:42%;max-width:9px;transform:translateX(-50%);border-radius:2px 2px 0 0;background:var(--paper);transition:height .5s cubic-bezier(.2,.7,.2,1)}
+.slot.sel{background:rgba(255,255,255,.08)}
+.slot.nada::after{content:"";position:absolute;left:16%;right:16%;bottom:0;height:2px;border-radius:1px;background:rgba(255,255,255,.15)}
+.ejes{position:relative;height:20px;margin-top:7px;font-size:11.5px;color:var(--paper-dim);font-variant-numeric:tabular-nums}
+.ejes span{position:absolute;top:0;white-space:nowrap}
+.pie-graf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;min-height:22px;margin-top:10px;font-size:13px;color:var(--paper-soft)}
+.pie-graf .leyenda{display:flex;gap:14px;color:var(--paper-dim);font-size:12.5px}
+.pie-graf .leyenda i{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:2px;vertical-align:-1px}
+
+.pie{display:flex;flex-direction:column;gap:14px;margin-top:2px;padding-top:16px;border-top:1px solid var(--edge);font-size:12.5px;color:var(--paper-dim)}
+.estado{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.estado .pt{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none}
+.estado.mal .pt{background:var(--bad)}
+.estado button{margin-left:auto;min-height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--edge);background:transparent;font-size:12.5px;color:var(--paper-soft)}
+.estado button:hover{background:var(--card)}
+.estado #actualizado{flex:1 1 auto;min-width:0}
+.toggle{display:flex;align-items:center;gap:12px;cursor:pointer;color:var(--paper-soft);font-size:13px}
+.toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.pista{position:relative;flex:none;width:42px;height:24px;border-radius:99px;background:rgba(255,255,255,.14);transition:background .15s}
+.pista::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--paper);transition:transform .15s}
+.toggle input:checked+.pista{background:var(--gold)}
+.toggle input:checked+.pista::after{transform:translateX(18px);background:var(--gold-ink)}
+.pie p{margin:0;line-height:1.5}
+.pie p+p{margin-top:-4px}
+.pie code{padding:1px 5px;border-radius:5px;background:rgba(255,255,255,.08);font-size:12px;color:var(--paper-soft);white-space:nowrap}
+
+@media (min-width:560px){
+  body{font-size:15.5px}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .kpi.principal{grid-column:auto}
+  .kpi{padding:18px 20px 16px}
+  .kpi .v,.kpi.principal .v{font-size:44px}
+  .kpi .nota{font-size:13px}
+  .grafica{height:180px}
+  .card{padding:20px}
+  .panel{gap:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="cargando" class="centro" role="status" aria-live="polite">
+  <span class="carga" aria-hidden="true"></span>
+  <span id="cargando-txt" class="sr">Cargando</span>
+  <button id="reintentar" class="btn-sec" type="button" hidden>Reintentar</button>
+</div>
+
+<!-- PIN -->
+<main id="pantalla-pin" class="pin" hidden>
+  <img class="sello" src="/assets/logo.webp" alt="" width="76" height="76">
+  <h1>Panel de analíticas</h1>
+  <p class="sub">Jardines Club Hípico</p>
+  <div class="puntos" id="puntos" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <p class="aviso" id="aviso" role="status" aria-live="polite">Ingresa tu PIN de 4 dígitos</p>
+  <div class="teclado" id="teclado" role="group" aria-label="Teclado numérico">
+    <button class="tecla" type="button" data-d="1">1</button>
+    <button class="tecla" type="button" data-d="2">2</button>
+    <button class="tecla" type="button" data-d="3">3</button>
+    <button class="tecla" type="button" data-d="4">4</button>
+    <button class="tecla" type="button" data-d="5">5</button>
+    <button class="tecla" type="button" data-d="6">6</button>
+    <button class="tecla" type="button" data-d="7">7</button>
+    <button class="tecla" type="button" data-d="8">8</button>
+    <button class="tecla" type="button" data-d="9">9</button>
+    <span class="tecla vacia" aria-hidden="true"></span>
+    <button class="tecla" type="button" data-d="0">0</button>
+    <button class="tecla" type="button" id="borrar" aria-label="Borrar el último dígito">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m17 9.5-5 5"/><path d="m12 9.5 5 5"/></svg>
+    </button>
+  </div>
+</main>
+
+<!-- Panel -->
+<main id="pantalla-panel" class="panel" hidden>
+  <header class="top">
+    <img class="sello-mini" src="/assets/logo.webp" alt="" width="44" height="44">
+    <div class="titulo">
+      <h1>Analíticas</h1>
+      <p>Jardines Club Hípico · página de links</p>
+    </div>
+    <button id="salir" class="btn-sec" type="button">Salir</button>
+  </header>
+
+  <div class="tabs" role="group" aria-label="Periodo">
+    <button type="button" data-r="hoy" aria-pressed="true">Hoy</button>
+    <button type="button" data-r="7d" aria-pressed="false">7 días</button>
+    <button type="button" data-r="30d" aria-pressed="false">30 días</button>
+    <button type="button" data-r="todo" aria-pressed="false">Todo</button>
+  </div>
+
+  <section class="kpis" aria-label="Resumen">
+    <div class="card kpi principal">
+      <div class="et">Visitas</div>
+      <div class="v" id="k-visitas">–</div>
+      <div class="nota">veces que se abrió la página</div>
+      <div class="nota ultima" id="ultima"></div>
+    </div>
+    <div class="card kpi">
+      <div class="et">Personas</div>
+      <div class="v" id="k-personas">–</div>
+      <div class="nota">dispositivos distintos</div>
+    </div>
+    <div class="card kpi">
+      <div class="et">Clics</div>
+      <div class="v" id="k-clics">–</div>
+      <div class="nota" id="k-clics-nota">en los botones</div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-botones">
+    <h2 id="h-botones">Clics por botón</h2>
+    <ul class="filas" id="lista-botones"></ul>
+  </section>
+
+  <section class="card" aria-labelledby="h-grafica">
+    <h2 id="h-grafica">Visitas por hora</h2>
+    <div class="grafica" id="grafica" role="img" aria-label="Gráfica de visitas"></div>
+    <div class="ejes" id="ejes" aria-hidden="true"></div>
+    <div class="pie-graf">
+      <span id="leyenda-sel">Toca una barra para ver el detalle</span>
+      <span class="leyenda" aria-hidden="true"><span><i style="background:var(--gold)"></i>Visitas</span><span><i style="background:var(--paper)"></i>Clics</span></span>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="h-fuentes">
+    <h2 id="h-fuentes">De dónde llegan</h2>
+    <ul class="filas" id="lista-fuentes"></ul>
+  </section>
+
+  <footer class="pie">
+    <div class="estado" id="estado">
+      <span class="pt" aria-hidden="true"></span>
+      <span id="actualizado" role="status" aria-live="polite">Actualizando…</span>
+      <button id="refrescar" type="button">Actualizar</button>
+    </div>
+    <label class="toggle">
+      <input type="checkbox" id="ignorar">
+      <span class="pista" aria-hidden="true"></span>
+      <span>No contar mis visitas ni clics en este dispositivo</span>
+    </label>
+    <p><b>Visitas</b> son las veces que se abrió la página; <b>personas</b>, los dispositivos distintos (alguien con dos celulares cuenta dos veces). Se actualiza solo cada pocos segundos.</p>
+    <p>Los QR que ya están impresos entran como «Directo / QR». Para separar uno nuevo, agrega <code>?s=nombre</code> al final de su enlace, por ejemplo <code>jch-links.vercel.app/?s=boda-garcia</code>.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+
+  var RANGOS = ['hoy', '7d', '30d', 'todo'];
+  var REFRESCO_MS = 25000;
+  var st = { rango: 'hoy', pin: '', enviando: false, bloqueo: null, req: 0, ultimoOk: 0, datos: null, sel: -1, pantalla: '' };
+
+  function leer(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function guardar(k, v) { try { if (v === null) window.localStorage.removeItem(k); else window.localStorage.setItem(k, v); } catch (e) {} }
+  function num(n) { return Number(n || 0).toLocaleString('es-MX'); }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+
+  function api(ruta, op) {
+    op = op || {};
+    op.credentials = 'same-origin';
+    op.cache = 'no-store';
+    return fetch(ruta, op).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { status: r.status, datos: j || {} }; });
+    });
+  }
+
+  /* ── Pantallas ─────────────────────────────────────────────────────────── */
+  function mostrar(cual) {
+    st.pantalla = cual;
+    $('#cargando').hidden = cual !== 'cargando';
+    $('#pantalla-pin').hidden = cual !== 'pin';
+    $('#pantalla-panel').hidden = cual !== 'panel';
+  }
+  function errorCarga(msg) {
+    mostrar('cargando');
+    $('#cargando .carga').hidden = true;
+    var t = $('#cargando-txt');
+    t.className = '';
+    t.textContent = msg;
+    $('#reintentar').hidden = false;
+  }
+  function cargando() {
+    mostrar('cargando');
+    $('#cargando .carga').hidden = false;
+    var t = $('#cargando-txt');
+    t.className = 'sr';
+    t.textContent = 'Cargando';
+    $('#reintentar').hidden = true;
+  }
+
+  /* ── PIN ───────────────────────────────────────────────────────────────── */
+  function pintaPuntos() {
+    $$('#puntos i').forEach(function (p, i) { p.className = i < st.pin.length ? 'on' : ''; });
+  }
+  function aviso(txt, mal) {
+    var a = $('#aviso');
+    a.textContent = txt;
+    a.className = 'aviso' + (mal ? ' mal' : '');
+  }
+  function ocupado(si) { $('#teclado').classList.toggle('ocupado', !!si); }
+
+  function tecla(d) {
+    if (st.enviando || st.bloqueo || st.pin.length >= 4) return;
+    st.pin += d;
+    pintaPuntos();
+    if (st.pin.length === 4) enviarPin();
+  }
+  function borrar() {
+    if (st.enviando || st.bloqueo) return;
+    st.pin = st.pin.slice(0, -1);
+    pintaPuntos();
+  }
+  function fallo(msg) {
+    var p = $('#puntos');
+    p.classList.remove('mal');
+    void p.offsetWidth;
+    p.classList.add('mal');
+    aviso(msg, true);
+    setTimeout(function () { st.pin = ''; pintaPuntos(); p.classList.remove('mal'); }, 420);
+  }
+  function reloj(s) {
+    var m = Math.floor(s / 60), r = s % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+  function bloquear(seg) {
+    var fin = Date.now() + seg * 1000;
+    ocupado(true);
+    st.bloqueo = setInterval(function () {
+      var resto = Math.ceil((fin - Date.now()) / 1000);
+      if (resto <= 0) {
+        clearInterval(st.bloqueo);
+        st.bloqueo = null;
+        st.pin = '';
+        pintaPuntos();
+        ocupado(false);
+        aviso('Ya puedes intentar de nuevo');
+        return;
+      }
+      aviso('Demasiados intentos. Intenta de nuevo en ' + reloj(resto), true);
+    }, 500);
+    aviso('Demasiados intentos. Intenta de nuevo en ' + reloj(seg), true);
+    st.pin = '';
+    pintaPuntos();
+  }
+  function enviarPin() {
+    st.enviando = true;
+    ocupado(true);
+    aviso('Verificando…');
+    api('/api/acceso', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: st.pin }) })
+      .then(function (r) {
+        st.enviando = false;
+        if (r.status === 200 && r.datos.ok) {
+          st.pin = '';
+          pintaPuntos();
+          ocupado(false);
+          iniciarPanel();
+          return;
+        }
+        if (r.status === 429) { bloquear(Math.max(1, Number(r.datos.espera) || 60)); return; }
+        ocupado(false);
+        if (r.status === 401) {
+          var q = Number(r.datos.quedan);
+          fallo(q > 1 ? 'PIN incorrecto. Te quedan ' + q + ' intentos.'
+              : q === 1 ? 'PIN incorrecto. Te queda 1 intento.'
+              : 'PIN incorrecto. Ya no te quedan intentos; espera unos minutos.');
+          return;
+        }
+        fallo('No se pudo verificar. Revisa tu conexión e intenta de nuevo.');
+      })
+      .catch(function () {
+        st.enviando = false;
+        ocupado(false);
+        fallo('Sin conexión. Intenta de nuevo.');
+      });
+  }
+  function irAPin(msg) {
+    detenerRefresco();
+    st.pin = '';
+    st.datos = null;
+    pintaPuntos();
+    ocupado(!!st.bloqueo);
+    mostrar('pin');
+    if (!st.bloqueo) aviso(msg || 'Ingresa tu PIN de 4 dígitos');
+  }
+
+  $('#teclado').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.id === 'borrar') borrar();
+    else if (b.getAttribute('data-d')) tecla(b.getAttribute('data-d'));
+  });
+  document.addEventListener('keydown', function (e) {
+    if (st.pantalla !== 'pin' || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) { tecla(e.key); e.preventDefault(); }
+    else if (e.key === 'Backspace') { borrar(); e.preventDefault(); }
+  });
+
+  /* ── Panel: datos ──────────────────────────────────────────────────────── */
+  var timer = null;
+  function detenerRefresco() { clearInterval(timer); timer = null; }
+  function iniciarRefresco() {
+    detenerRefresco();
+    timer = setInterval(function () { if (!document.hidden && st.pantalla === 'panel') cargar(); }, REFRESCO_MS);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && st.pantalla === 'panel' && Date.now() - st.ultimoOk > 10000) cargar();
+  });
+
+  function estadoRed(ok) {
+    var box = $('#estado');
+    box.classList.toggle('mal', !ok);
+    if (ok) {
+      $('#actualizado').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    } else {
+      $('#actualizado').textContent = 'Sin conexión con el servidor. Se reintenta solo.';
+    }
+  }
+
+  function cargar() {
+    var n = ++st.req;
+    return api('/api/stats?r=' + encodeURIComponent(st.rango))
+      .then(function (r) {
+        if (n !== st.req) return;
+        if (r.status === 401) { irAPin('Tu sesión terminó. Ingresa el PIN otra vez.'); return; }
+        if (r.status !== 200 || !r.datos.ok) { estadoRed(false); return; }
+        st.datos = r.datos;
+        st.ultimoOk = Date.now();
+        pintar(r.datos);
+        estadoRed(true);
+      })
+      .catch(function () { if (n === st.req) estadoRed(false); });
+  }
+
+  function iniciarPanel() {
+    mostrar('panel');
+    iniciarRefresco();
+    cargar();
+  }
+
+  /* ── Panel: dibujo ─────────────────────────────────────────────────────── */
+  function hace(iso) {
+    if (!iso) return '';
+    var s = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+    if (isNaN(s)) return '';
+    if (s < 60) return 'hace menos de 1 min';
+    var m = Math.round(s / 60);
+    if (m < 60) return 'hace ' + m + ' min';
+    var h = Math.round(m / 60);
+    if (h < 48) return 'hace ' + h + (h === 1 ? ' hora' : ' horas');
+    return 'hace ' + Math.round(h / 24) + ' días';
+  }
+
+  function filas(ul, items, claveNum, claveSub, subTxt, pista) {
+    ul.textContent = '';
+    var max = 0;
+    items.forEach(function (it) { if (it[claveNum] > max) max = it[claveNum]; });
+    items.forEach(function (it) {
+      var li = el('li', 'fila' + (it[claveNum] === 0 ? ' cero' : ''));
+      var linea = el('div', 'linea');
+      var nom = el('div', 'nom', it.etiqueta);
+      if (pista && pista[it.id]) nom.appendChild(el('small', '', pista[it.id]));
+      var n = el('div', 'num');
+      n.appendChild(el('b', '', num(it[claveNum])));
+      n.appendChild(el('span', '', num(it[claveSub]) + ' ' + (it[claveSub] === 1 ? subTxt[0] : subTxt[1])));
+      linea.appendChild(nom);
+      linea.appendChild(n);
+      var barra = el('div', 'barra');
+      var fill = el('i');
+      barra.appendChild(fill);
+      li.appendChild(linea);
+      li.appendChild(barra);
+      ul.appendChild(li);
+      requestAnimationFrame(function () { fill.style.width = (max ? (it[claveNum] / max) * 100 : 0) + '%'; });
+    });
+  }
+
+  function fechaCorta(t) {
+    return new Date(t + 'T12:00:00Z').toLocaleDateString('es-MX', { day: 'numeric', month: 'short', timeZone: 'UTC' }).replace('.', '');
+  }
+  function fechaLarga(t) {
+    return new Date(t + 'T12:00:00Z').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+  }
+  function plural(n, uno, varios) { return num(n) + ' ' + (n === 1 ? uno : varios); }
+
+  function leyendaPunto(p, por) {
+    var cuando = por === 'hora'
+      ? p.t + '–' + p.t.slice(0, 2) + ':59'
+      : fechaLarga(p.t);
+    return cuando + ' · ' + plural(p.visitas, 'visita', 'visitas') + ' · ' + plural(p.clics, 'clic', 'clics');
+  }
+
+  function seleccionar(i, d) {
+    var slots = $$('#grafica .slot');
+    if (st.sel >= 0 && slots[st.sel]) slots[st.sel].classList.remove('sel');
+    st.sel = i;
+    var cap = $('#leyenda-sel');
+    if (i >= 0 && slots[i] && d.serie[i]) {
+      slots[i].classList.add('sel');
+      cap.textContent = leyendaPunto(d.serie[i], d.por);
+    } else {
+      cap.textContent = resumenGrafica(d);
+    }
+  }
+
+  function resumenGrafica(d) {
+    var mejor = null;
+    d.serie.forEach(function (p) { if (p.visitas > 0 && (!mejor || p.visitas > mejor.visitas)) mejor = p; });
+    if (!mejor) return 'Sin visitas en este periodo';
+    return (d.por === 'hora' ? 'Hora con más visitas: ' + mejor.t : 'Día con más visitas: ' + fechaCorta(mejor.t)) + ' (' + num(mejor.visitas) + ')';
+  }
+
+  function grafica(d) {
+    var g = $('#grafica'), ejes = $('#ejes');
+    g.textContent = '';
+    ejes.textContent = '';
+    st.sel = -1;
+    var serie = d.serie || [];
+    var max = 1;
+    serie.forEach(function (p) { max = Math.max(max, p.visitas, p.clics); });
+    serie.forEach(function (p) {
+      var s = el('div', 'slot' + (p.visitas === 0 && p.clics === 0 ? ' nada' : ''));
+      var v = el('i', 'v'), c = el('i', 'c');
+      v.style.height = '0%';
+      c.style.height = '0%';
+      s.appendChild(v);
+      if (p.clics > 0) s.appendChild(c);
+      g.appendChild(s);
+      var hv = p.visitas > 0 ? Math.max(3, (p.visitas / max) * 100) : 0;
+      var hc = p.clics > 0 ? Math.max(3, (p.clics / max) * 100) : 0;
+      requestAnimationFrame(function () { v.style.height = hv + '%'; c.style.height = hc + '%'; });
+    });
+
+    var n = serie.length;
+    function etiqueta(i, txt, alinear) {
+      var sp = el('span', '', txt);
+      if (alinear === 'fin') { sp.style.right = '0'; }
+      else if (alinear === 'centro') { sp.style.left = ((i + 0.5) / n * 100) + '%'; sp.style.transform = 'translateX(-50%)'; }
+      else { sp.style.left = (i / n * 100) + '%'; }
+      ejes.appendChild(sp);
+    }
+    if (n) {
+      if (d.por === 'hora') {
+        [0, 6, 12, 18].forEach(function (h) { etiqueta(h, (h < 10 ? '0' : '') + h + ':00', 'inicio'); });
+      } else if (n === 1) {
+        etiqueta(0, fechaCorta(serie[0].t), 'inicio');
+      } else {
+        etiqueta(0, fechaCorta(serie[0].t), 'inicio');
+        if (n > 4) etiqueta(Math.round((n - 1) / 2), fechaCorta(serie[Math.round((n - 1) / 2)].t), 'centro');
+        etiqueta(n - 1, fechaCorta(serie[n - 1].t), 'fin');
+      }
+    }
+    var totalV = d.totales.visitas, totalC = d.totales.clics;
+    g.setAttribute('aria-label', (d.por === 'hora' ? 'Visitas por hora' : 'Visitas por día') + '. ' + resumenGrafica(d) + '. Total: ' + plural(totalV, 'visita', 'visitas') + ' y ' + plural(totalC, 'clic', 'clics') + '.');
+    $('#leyenda-sel').textContent = resumenGrafica(d);
+  }
+
+  /* Las cifras nunca se parten: si una no cabe, se achica (personas y clics siempre del mismo tamaño). */
+  function ajusta(v) {
+    v.style.fontSize = '';
+    var s = parseFloat(window.getComputedStyle(v).fontSize);
+    while (v.scrollWidth > v.clientWidth + 1 && s > 16) { s -= 1; v.style.fontSize = s + 'px'; }
+    return s;
+  }
+  function ajustaNumeros() {
+    if ($('#pantalla-panel').hidden) return;
+    var vs = $$('.kpi .v');
+    var tres = window.matchMedia && window.matchMedia('(min-width:560px)').matches;
+    var grupo = tres ? vs : vs.slice(1);
+    var tam = Math.min.apply(null, grupo.map(ajusta));
+    grupo.forEach(function (v) { v.style.fontSize = tam + 'px'; });
+    if (!tres) ajusta(vs[0]);
+  }
+  window.addEventListener('resize', function () { window.requestAnimationFrame(ajustaNumeros); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustaNumeros);
+
+  function pintar(d) {
+    var t = d.totales || {};
+    $('#k-visitas').textContent = num(t.visitas);
+    $('#k-personas').textContent = num(t.personas);
+    $('#k-clics').textContent = num(t.clics);
+    var pct = t.personas > 0 ? Math.min(100, Math.round((t.personas_clic / t.personas) * 100)) : null;
+    $('#k-clics-nota').textContent = t.clics > 0 && pct !== null
+      ? plural(t.personas_clic, 'persona hizo clic', 'personas hicieron clic') + ' (' + pct + '%)'
+      : 'en los botones';
+    $('#ultima').textContent = t.visitas > 0 && d.ultima_visita ? 'Última visita ' + hace(d.ultima_visita) : 'Todavía no hay visitas en este periodo';
+    ajustaNumeros();
+
+    var ordenados = d.botones.map(function (b, i) { b._i = i; return b; })
+      .sort(function (a, b) { return b.clics - a.clics || a._i - b._i; });
+    filas($('#lista-botones'), ordenados, 'clics', 'personas', ['persona', 'personas']);
+
+    $('#h-grafica').textContent = d.por === 'hora' ? 'Visitas por hora' : 'Visitas por día';
+    grafica(d);
+
+    var ul = $('#lista-fuentes');
+    if (!d.fuentes.length) {
+      ul.textContent = '';
+      var li = el('li');
+      li.appendChild(el('p', 'vacio-msg', 'Todavía no hay visitas en este periodo.'));
+      ul.appendChild(li);
+    } else {
+      filas(ul, d.fuentes, 'visitas', 'personas', ['persona', 'personas'], { directo: 'QR, enlace guardado o escrito a mano' });
+    }
+  }
+
+  /* ── Eventos de la interfaz ────────────────────────────────────────────── */
+  $$('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var r = b.getAttribute('data-r');
+      if (r === st.rango) return;
+      st.rango = r;
+      guardar('jch_adm_rango', r);
+      $$('.tabs button').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      cargar();
+    });
+  });
+
+  var graf = $('#grafica');
+  function indiceDe(e) {
+    var r = graf.getBoundingClientRect();
+    var n = (st.datos && st.datos.serie ? st.datos.serie.length : 0);
+    if (!n || r.width === 0) return -1;
+    return Math.max(0, Math.min(n - 1, Math.floor(((e.clientX - r.left) / r.width) * n)));
+  }
+  graf.addEventListener('pointerdown', function (e) { if (st.datos) seleccionar(indiceDe(e), st.datos); });
+  graf.addEventListener('pointermove', function (e) {
+    if (st.datos && (e.pointerType === 'mouse' || e.buttons)) seleccionar(indiceDe(e), st.datos);
+  });
+  graf.addEventListener('pointerleave', function (e) {
+    if (st.datos && e.pointerType === 'mouse') seleccionar(-1, st.datos);
+  });
+
+  $('#refrescar').addEventListener('click', function () { cargar(); });
+  $('#reintentar').addEventListener('click', function () { arrancar(); });
+  $('#salir').addEventListener('click', function () {
+    $('#salir').disabled = true;
+    api('/api/salir', { method: 'POST' }).catch(function () {}).then(function () {
+      $('#salir').disabled = false;
+      irAPin('Sesión cerrada');
+    });
+  });
+
+  var ign = $('#ignorar');
+  ign.checked = leer('jch_ignorar') === '1';
+  ign.addEventListener('change', function () { guardar('jch_ignorar', ign.checked ? '1' : null); });
+
+  /* ── Arranque ──────────────────────────────────────────────────────────── */
+  function arrancar() {
+    cargando();
+    var r = leer('jch_adm_rango');
+    if (RANGOS.indexOf(r) >= 0) st.rango = r;
+    $$('.tabs button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-r') === st.rango ? 'true' : 'false'); });
+    var n = ++st.req;
+    api('/api/stats?r=' + encodeURIComponent(st.rango))
+      .then(function (res) {
+        if (n !== st.req) return;
+        if (res.status === 200 && res.datos.ok) {
+          st.datos = res.datos;
+          st.ultimoOk = Date.now();
+          mostrar('panel');
+          iniciarRefresco();
+          pintar(res.datos);
+          estadoRed(true);
+        } else if (res.status === 401) {
+          irAPin();
+        } else {
+          errorCarga('No se pudo conectar con el servidor.');
+        }
+      })
+      .catch(function () { errorCarga('No se pudo conectar con el servidor.'); });
+  }
+  arrancar();
+})();
+</script>
+</body>
+</html>
