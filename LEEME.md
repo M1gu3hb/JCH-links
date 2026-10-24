@@ -16,4 +16,4 @@ Una sola página: `index.html` (HTML + CSS + JS, sin dependencias ni build).
 - Teléfono (llamada y WhatsApp): +52 55 2311 8153
 - Sitio: https://jardines-club-hipico.vercel.app
 - Facebook: https://www.facebook.com/JardinesClubHipico/
-- Dirección: Duraznos S/N, Sta. Inés, Xochimilco, 16810 CDMX
+- Dirección (para visitas): Olivos 23, Sta. Inés, Xochimilco, 16810 CDMX
